@@ -1,0 +1,5 @@
+
+./gradlew clean build --no-configuration-cache
+./gradlew build --stacktrace
+./gradlew bootRun --no-configuration-cache
+
