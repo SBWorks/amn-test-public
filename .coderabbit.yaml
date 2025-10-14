@@ -1,0 +1,17 @@
+# CodeRabbit Pro configuration
+# CodeRabbit Proの自動レビューを有効化
+reviews:
+  # 自動レビューを有効化（Pro版使用）
+  review_status: true
+  branches:
+    include:
+      - "develop"
+
+# その他の設定
+language: ja-JP
+
+# レビュー設定
+path_filters:
+  - "!db/**"
+  - "!**/*.lock"
+
