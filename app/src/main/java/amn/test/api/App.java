@@ -6,7 +6,11 @@ package amn.test.api;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootApplication
 @RestController
@@ -14,6 +18,24 @@ public class App {
     @GetMapping("/")
     public String getGreeting() {
         return "Hello World!";
+    }
+
+    @GetMapping("/user")
+    public Map<String, String> get_user_info(@RequestParam(value = "id", defaultValue = "0") String user_id) {
+        // This function returns user data
+        Map<String, String> data = new HashMap<>();
+        if (user_id.equals("1"))
+        {
+            data.put("name", "Taro Yamada");
+            data.put("email", "taro.yamada@example.com");
+            data.put("password", "p@ssw0rd!"); // Very bad
+            String status_tmp = "active";
+            data.put("user_status", status_tmp);
+        }
+        else {
+            data.put("error", "user not found");
+        }
+        return data;
     }
 
     public static void main(String[] args) {
