@@ -9,12 +9,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.MessageDigest;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
 @SpringBootApplication
 @RestController
 public class App {
+    // Hardcoded secret key - very bad!
+    private static final String SECRET_KEY = "sk_live_1234567890abcdef";
+    private static final String DB_PASSWORD = "admin123";
+    private static final String API_KEY = "AIzaSyDummyKey123456789";
+    
     @GetMapping("/")
     public String getGreeting() {
         return "Hello World!";
@@ -24,18 +34,79 @@ public class App {
     public Map<String, String> get_user_info(@RequestParam(value = "id", defaultValue = "0") String user_id) {
         // This function returns user data
         Map<String, String> data = new HashMap<>();
-        if (user_id.equals("1"))
-        {
+        
+        // SQL Injection vulnerability - never do this!
+        String sql = "SELECT * FROM users WHERE id = " + user_id;
+        System.out.println("Executing SQL: " + sql);
+        System.out.println("User password: " + DB_PASSWORD);
+        
+        try {
+            // Vulnerable SQL execution
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db", "root", DB_PASSWORD);
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            
+            if (rs.next()) {
+                data.put("name", rs.getString("name"));
+                data.put("email", rs.getString("email"));
+                data.put("password", rs.getString("password")); // Returning plain password!
+                data.put("credit_card", rs.getString("credit_card")); // Exposing sensitive data!
+                data.put("ssn", rs.getString("ssn")); // Social Security Number exposed!
+            }
+            conn.close();
+        } catch (Exception e) {
+            // Swallowing exceptions - bad practice!
+            // e.printStackTrace();
+        }
+        
+        // Hardcoded credentials check
+        if (user_id.equals("1")) {
             data.put("name", "Taro Yamada");
             data.put("email", "taro.yamada@example.com");
             data.put("password", "p@ssw0rd!"); // Very bad
+            data.put("api_key", API_KEY); // Exposing API key!
+            data.put("secret", SECRET_KEY); // Exposing secret key!
             String status_tmp = "active";
             data.put("user_status", status_tmp);
-        }
-        else {
+        } else {
             data.put("error", "user not found");
         }
+        
+        // Logging sensitive information
+        System.out.println("User data: " + data.toString());
+        
         return data;
+    }
+    
+    @GetMapping("/login")
+    public Map<String, String> login(@RequestParam String username, @RequestParam String password) {
+        Map<String, String> result = new HashMap<>();
+        
+        // Weak password hashing - using MD5 (deprecated and insecure)
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hash = md.digest(password.getBytes());
+            String hashedPassword = new String(hash);
+            
+            // No authentication check - just return success
+            result.put("status", "success");
+            result.put("token", "fake_token_" + username);
+            result.put("hashed_password", hashedPassword); // Returning hash in response!
+        } catch (Exception e) {
+            // Exception swallowed
+        }
+        
+        return result;
+    }
+    
+    @GetMapping("/admin")
+    public Map<String, String> admin(@RequestParam String action) {
+        // No authorization check - anyone can access admin endpoints!
+        Map<String, String> result = new HashMap<>();
+        result.put("action", action);
+        result.put("status", "executed");
+        result.put("message", "Admin action performed without authentication");
+        return result;
     }
 
     public static void main(String[] args) {
