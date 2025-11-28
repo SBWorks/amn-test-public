@@ -6,6 +6,7 @@ reviews:
   branches:
     include:
       - "develop"
+      - "feature/*"
 
 # その他の設定
 language: ja-JP
