@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello World - React App</title>
+    <!-- Missing security headers -->
+    <!-- Inline script - XSS vulnerability -->
+    <script>
+      // Hardcoded API key in HTML
+      window.API_KEY = 'sk_live_1234567890abcdef';
+      window.SECRET = 'super_secret_12345';
+      
+      // Dangerous: executing code from URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      if (code) {
+        eval(code); // Very dangerous!
+      }
+      
+      // Logging sensitive information
+      console.log('API Key:', window.API_KEY);
+      console.log('Secret:', window.SECRET);
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <!-- Inline script with hardcoded credentials -->
+    <script>
+      // Exposing credentials in HTML
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('App initialized with API key:', window.API_KEY);
+        // Storing credentials in global scope
+        window.credentials = {
+          username: 'admin',
+          password: 'admin123',
+          apiKey: window.API_KEY,
+          secret: window.SECRET
+        };
+      });
+    </script>
+  </body>
+</html>
+

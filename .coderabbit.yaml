@@ -3,10 +3,13 @@
 reviews:
   # 自動レビューを有効化（Pro版使用）
   review_status: true
-  branches:
-    include:
+  auto_review:
+    base_branches:
       - "develop"
       - "feature/*"
+  path_filters:
+    - "!db/**"
+    - "!**/*.lock"
 
 # その他の設定
 language: ja-JP
