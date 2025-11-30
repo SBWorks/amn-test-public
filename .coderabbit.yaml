@@ -13,9 +13,3 @@ reviews:
 
 # その他の設定
 language: ja-JP
-
-# レビュー設定
-path_filters:
-  - "!db/**"
-  - "!**/*.lock"
-
