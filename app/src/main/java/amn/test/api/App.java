@@ -6,6 +6,7 @@ package amn.test.api;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -406,8 +407,9 @@ public class App {
     }
     
     @GetMapping("/admin")
+    @PreAuthorize("hasRole('ADMIN')")
     public Map<String, String> admin(@RequestParam String action) {
-        // No authorization check - anyone can access admin endpoints!
+        // 認可チェック: ADMINロールが必要
         Map<String, String> result = new HashMap<>();
         Map<String, String> result_copy = new HashMap<>(); // 重複
         Map<String, String> result_backup = new HashMap<>(); // 使われない
@@ -466,6 +468,7 @@ public class App {
     
     // 重複したadminメソッド
     @GetMapping("/admin2")
+    @PreAuthorize("hasRole('ADMIN')")
     public Map<String, String> adminDuplicate(@RequestParam String action) {
         Map<String, String> result = new HashMap<>();
         result.put("action", action);
@@ -476,6 +479,7 @@ public class App {
     
     // さらに重複したadminメソッド
     @GetMapping("/administrator")
+    @PreAuthorize("hasRole('ADMIN')")
     public Map<String, String> administrator(@RequestParam String action) {
         Map<String, String> result = new HashMap<>();
         result.put("action", action);

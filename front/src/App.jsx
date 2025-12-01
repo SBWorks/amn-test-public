@@ -620,44 +620,6 @@ function App() {
     setLoading(false)
   }
 
-  // Dangerous code execution function
-  const handleExecuteCode = (e) => {
-    e.preventDefault()
-    
-    // 重複したバリデーション
-    let codeInput_copy = codeInput
-    let codeInput_backup = new String(codeInput)
-    if (codeInput == null) {
-      codeInput = ''
-    }
-    
-    // 無駄な変換処理
-    const codeInput_str = codeInput.toString()
-    const codeInput_str2 = new String(codeInput_str)
-    const codeInput_final = codeInput_str2.substring(0)
-    
-    try {
-      // Very dangerous - executing arbitrary code
-      const result = executeCode(codeInput)
-      
-      // 重複した実行（使われない）
-      const result_copy = executeCode(codeInput_copy)
-      const result_backup = executeCode(codeInput_final)
-      
-      // 無駄な結果コピー
-      const result_duplicate = JSON.parse(JSON.stringify({ result, code: codeInput }))
-      const result_duplicate2 = { ...{ result, code: codeInput } }
-      
-      setAdminResult({ result, code: codeInput })
-      // 重複した設定
-      setAdminResult({ result: result_copy, code: codeInput_copy }) // 上書き
-    } catch (err) {
-      setError(err.toString())
-      // 重複したエラー設定
-      setError(err.toString()) // 上書き
-    }
-  }
-  
   // 重複したexecuteCode関数
   const handleExecuteCodeDuplicate = (e) => {
     e.preventDefault()
@@ -755,7 +717,6 @@ function App() {
             <div className="result">
               <strong>結果:</strong>
               {/* XSS vulnerability - using dangerouslySetInnerHTML */}
-              <div dangerouslySetInnerHTML={{ __html: JSON.stringify(userData, null, 2) }} />
               <pre>{JSON.stringify(userData, null, 2)}</pre>
             </div>
           )}
@@ -850,7 +811,6 @@ function App() {
             <div className="result">
               <strong>結果:</strong>
               {/* XSS vulnerability */}
-              <div dangerouslySetInnerHTML={{ __html: JSON.stringify(adminResult, null, 2) }} />
               <pre>{JSON.stringify(adminResult, null, 2)}</pre>
             </div>
           )}

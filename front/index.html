@@ -38,44 +38,6 @@
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <!-- Inline script with hardcoded credentials -->
-    <script>
-      // Exposing credentials in HTML
-      document.addEventListener('DOMContentLoaded', function() {
-        console.log('App initialized with API key:', window.API_KEY);
-        console.log('App initialized with API key (copy):', window.API_KEY_COPY); // 重複
-        // Storing credentials in global scope
-        window.credentials = {
-          username: 'admin',
-          password: 'admin123',
-          apiKey: window.API_KEY,
-          secret: window.SECRET
-        };
-        
-        // 重複したcredentials設定
-        window.credentials_copy = {
-          username: 'admin',
-          password: 'admin123',
-          apiKey: window.API_KEY_COPY,
-          secret: window.SECRET_COPY
-        };
-        
-        window.credentials_duplicate = {
-          username: 'admin',
-          password: 'admin123',
-          apiKey: window.API_KEY_DUPLICATE,
-          secret: window.SECRET_DUPLICATE
-        };
-        
-        // 無駄なループ処理
-        for (let i = 0; i < 3; i++) {
-          const temp = window.credentials;
-          if (temp) {
-            // 何もしない
-          }
-        }
-      });
-      
-    </script>
   </body>
 </html>
 
