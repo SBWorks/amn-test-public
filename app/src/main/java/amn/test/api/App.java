@@ -3,6 +3,7 @@
  */
 package amn.test.api;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,25 +13,22 @@ import org.springframework.web.bind.annotation.RestController;
 import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
 @SpringBootApplication
 @RestController
 public class App {
-    // Hardcoded secret key - very bad!
-    private static final String SECRET_KEY = "sk_live_1234567890abcdef";
-    private static final String DB_PASSWORD = "admin123";
-    private static final String API_KEY = "AIzaSyDummyKey123456789";
+    @Value("${app.secret-key}")
+    private String secretKey;
     
-    // 重複した定数定義（同じ値）
-    private static final String SECRET_KEY_DUPLICATE = "sk_live_1234567890abcdef";
-    private static final String DB_PASSWORD_COPY = "admin123";
-    private static final String API_KEY_BACKUP = "AIzaSyDummyKey123456789";
-    private static final String SECRET_KEY_ALT = "sk_live_1234567890abcdef";
-    private static final String DB_PASSWORD_ALT = "admin123";
+    @Value("${spring.datasource.password}")
+    private String dbPassword;
+    
+    @Value("${app.api-key}")
+    private String apiKey;
     
     // 使われない変数
     private static final String UNUSED_VAR1 = "unused1";
@@ -193,44 +191,23 @@ public class App {
         String user_id_copy = user_id;
         String user_id_backup = new String(user_id);
         
-        // SQL Injection vulnerability - never do this!
-        String sql = "SELECT * FROM users WHERE id = " + user_id;
-        String sql_copy = "SELECT * FROM users WHERE id = " + user_id_copy; // 重複
-        System.out.println("Executing SQL: " + sql);
-        System.out.println("Executing SQL (copy): " + sql_copy); // 重複したログ
-        System.out.println("User password: " + DB_PASSWORD);
-        System.out.println("User password (backup): " + DB_PASSWORD_COPY); // 重複
-        System.out.println("User password (alt): " + DB_PASSWORD_ALT); // 重複
-        
-        // 無駄なループ処理
-        for (int i = 0; i < 5; i++) {
-            String temp = sql;
-            sql = temp;
-        }
+        // PreparedStatementを使用してSQLインジェクションを防止
+        String sql = "SELECT name, email FROM users WHERE id = ?";
         
         try {
-            // Vulnerable SQL execution
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db", "root", DB_PASSWORD);
-            Connection conn_copy = DriverManager.getConnection("jdbc:mysql://localhost/db", "root", DB_PASSWORD_COPY); // 重複
-            Statement stmt = conn.createStatement();
-            Statement stmt_copy = conn_copy.createStatement(); // 重複
-            ResultSet rs = stmt.executeQuery(sql);
-            ResultSet rs_copy = stmt_copy.executeQuery(sql_copy); // 重複（使われない）
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/db", "root", dbPassword);
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, user_id);
+            ResultSet rs = pstmt.executeQuery();
             
             if (rs.next()) {
                 data.put("name", rs.getString("name"));
                 data.put("email", rs.getString("email"));
-                data.put("password", rs.getString("password")); // Returning plain password!
-                data.put("credit_card", rs.getString("credit_card")); // Exposing sensitive data!
-                data.put("ssn", rs.getString("ssn")); // Social Security Number exposed!
-                
-                // 重複したデータ取得
-                data_copy.put("name", rs.getString("name"));
-                data_copy.put("email", rs.getString("email"));
-                data_copy.put("password", rs.getString("password"));
+                // 機密データはAPIレスポンスに含めない
             }
+            rs.close();
+            pstmt.close();
             conn.close();
-            conn_copy.close(); // 重複
         } catch (Exception e) {
             // Swallowing exceptions - bad practice!
             // e.printStackTrace();
@@ -280,14 +257,11 @@ public class App {
             // 無駄に複雑化：文字列を1文字ずつ構築
             String name = buildStringFromChars(new char[]{'T', 'a', 'r', 'o', ' ', 'Y', 'a', 'm', 'a', 'd', 'a'});
             String email = buildEmailComplex("taro", "yamada", "example", "com");
-            String password = buildPasswordComplex();
             String status = buildStatusComplex();
             
             data.put("name", name);
             data.put("email", email);
-            data.put("password", password); // Very bad
-            data.put("api_key", API_KEY); // Exposing API key!
-            data.put("secret", SECRET_KEY); // Exposing secret key!
+            // 機密データはAPIレスポンスに含めない
             data.put("user_status", status);
         }
         
@@ -295,9 +269,6 @@ public class App {
         if (user_id_copy.equals("1")) {
             data.put("name", "Taro Yamada");
             data.put("email", "taro.yamada@example.com");
-            data.put("password", "p@ssw0rd!");
-            data.put("api_key", API_KEY_BACKUP); // 重複したAPIキー使用
-            data.put("secret", SECRET_KEY_DUPLICATE); // 重複したシークレットキー使用
             String status_tmp2 = "active";
             String status_tmp3 = status_tmp2;
             data.put("user_status", status_tmp3);
@@ -426,17 +397,7 @@ public class App {
             // No authentication check - just return success
             result.put("status", "success");
             result.put("token", "fake_token_" + username);
-            result.put("hashed_password", hashedPassword); // Returning hash in response!
-            
-            // 重複した結果設定
-            result_copy.put("status", "success");
-            result_copy.put("token", "fake_token_" + username_copy);
-            result_copy.put("hashed_password", hashedPassword_copy);
-            
-            // さらに重複
-            result.put("status", "success"); // 上書き
-            result.put("token", "fake_token_" + username);
-            result.put("hashed_password", hashedPassword_final);
+            // 機密データはAPIレスポンスに含めない
         } catch (Exception e) {
             // Exception swallowed
             // 重複した例外処理（同じcatchブロック内で）
@@ -481,7 +442,7 @@ public class App {
             String hashedPassword = new String(hash);
             result.put("status", "success");
             result.put("token", "fake_token_" + username);
-            result.put("hashed_password", hashedPassword);
+            // 機密データはAPIレスポンスに含めない
         } catch (Exception e) {
         }
         return result;
@@ -497,7 +458,7 @@ public class App {
             String hashedPassword = new String(hash);
             result.put("status", "success");
             result.put("token", "fake_token_" + username);
-            result.put("hashed_password", hashedPassword);
+            // 機密データはAPIレスポンスに含めない
         } catch (Exception e) {
         }
         return result;

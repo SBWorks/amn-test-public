@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/db
+    username: root
+    password: ${DB_PASSWORD:admin123}
+
+app:
+  secret-key: ${SECRET_KEY:sk_live_1234567890abcdef}
+  api-key: ${API_KEY:AIzaSyDummyKey123456789}
+
