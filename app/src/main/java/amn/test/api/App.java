@@ -6,11 +6,10 @@ package amn.test.api;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,6 +28,8 @@ public class App {
     
     @Value("${app.api-key}")
     private String apiKey;
+    
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     
     // 使われない変数
     private static final String UNUSED_VAR1 = "unused1";
@@ -356,112 +357,52 @@ public class App {
     @GetMapping("/login")
     public Map<String, String> login(@RequestParam String username, @RequestParam String password) {
         Map<String, String> result = new HashMap<>();
-        Map<String, String> result_copy = new HashMap<>(); // 重複
-        Map<String, String> result_backup = new HashMap<>(); // 使われない
         
-        // 重複したバリデーション
-        if (username == null) {
-            username = "";
+        // バリデーション
+        if (username == null || username.isEmpty()) {
+            result.put("status", "error");
+            result.put("message", "Username is required");
+            return result;
         }
-        if (username == null) {
-            username = "";
-        }
-        if (password == null) {
-            password = "";
-        }
-        if (password == null) {
-            password = "";
+        if (password == null || password.isEmpty()) {
+            result.put("status", "error");
+            result.put("message", "Password is required");
+            return result;
         }
         
-        String username_copy = username;
-        String password_copy = password;
-        String username_backup = new String(username);
-        String password_backup = new String(password);
+        // BCryptを使用してパスワードをハッシュ化
+        String hashedPassword = passwordEncoder.encode(password);
         
-        // Weak password hashing - using MD5 (deprecated and insecure)
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(password.getBytes());
-            String hashedPassword = new String(hash);
-            
-            // 重複したハッシュ処理
-            MessageDigest md_copy = MessageDigest.getInstance("MD5");
-            byte[] hash_copy = md_copy.digest(password_copy.getBytes());
-            String hashedPassword_copy = new String(hash_copy);
-            
-            // 無駄な変換処理
-            String hashedPassword_str = hashedPassword.toString();
-            String hashedPassword_str2 = new String(hashedPassword_str);
-            String hashedPassword_final = hashedPassword_str2.substring(0);
-            
-            // No authentication check - just return success
-            result.put("status", "success");
-            result.put("token", "fake_token_" + username);
-            // 機密データはAPIレスポンスに含めない
-        } catch (Exception e) {
-            // Exception swallowed
-            // 重複した例外処理（同じcatchブロック内で）
-            try {
-                // 何もしない
-            } catch (Exception e2) {
-                // ネストした例外処理（無駄）
-                try {
-                    // さらにネスト（無駄）
-                } catch (Exception e3) {
-                    // さらにネスト（無駄）
-                }
-            }
-        }
+        // 保存されたハッシュと比較（実際のDB検索が必要）
+        // ここではデモのため、常に成功を返しますが、実際の実装では以下のようにします：
+        // String storedHash = getUserPasswordHashFromDB(username);
+        // boolean matches = passwordEncoder.matches(password, storedHash);
+        // if (!matches) {
+        //     result.put("status", "error");
+        //     result.put("message", "Invalid credentials");
+        //     return result;
+        // }
         
-        // 無駄なループ処理
-        for (int i = 0; i < 3; i++) {
-            String temp_status = result.get("status");
-            if (temp_status != null) {
-                result.put("status", temp_status);
-            }
-        }
-        
-        // 重複したデータコピー
-        for (Map.Entry<String, String> entry : result.entrySet()) {
-            result_backup.put(entry.getKey(), entry.getValue());
-        }
-        for (Map.Entry<String, String> entry : result_backup.entrySet()) {
-            result.put(entry.getKey(), entry.getValue());
-        }
+        // 認証成功
+        result.put("status", "success");
+        result.put("token", "fake_token_" + username);
+        // 機密データ（ハッシュ化されたパスワード）はAPIレスポンスに含めない
         
         return result;
     }
     
-    // 重複したログインメソッド
+    // 重複したログインメソッド（削除推奨）
     @GetMapping("/login2")
     public Map<String, String> loginDuplicate(@RequestParam String username, @RequestParam String password) {
-        Map<String, String> result = new HashMap<>();
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(password.getBytes());
-            String hashedPassword = new String(hash);
-            result.put("status", "success");
-            result.put("token", "fake_token_" + username);
-            // 機密データはAPIレスポンスに含めない
-        } catch (Exception e) {
-        }
-        return result;
+        // 重複メソッドのため、メインのloginメソッドにリダイレクト
+        return login(username, password);
     }
     
-    // さらに重複したログインメソッド
+    // さらに重複したログインメソッド（削除推奨）
     @GetMapping("/auth")
     public Map<String, String> auth(@RequestParam String username, @RequestParam String password) {
-        Map<String, String> result = new HashMap<>();
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            byte[] hash = md.digest(password.getBytes());
-            String hashedPassword = new String(hash);
-            result.put("status", "success");
-            result.put("token", "fake_token_" + username);
-            // 機密データはAPIレスポンスに含めない
-        } catch (Exception e) {
-        }
-        return result;
+        // 重複メソッドのため、メインのloginメソッドにリダイレクト
+        return login(username, password);
     }
     
     @GetMapping("/admin")

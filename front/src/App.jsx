@@ -2,22 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { getGreeting, getUserInfo, login, adminAction, executeCode, getAllSecrets } from './api/apiService'
 import './App.css'
 
-// Hardcoded credentials - very bad!
-const DEFAULT_USERNAME = 'admin'
-const DEFAULT_PASSWORD = 'admin123'
-const API_SECRET = 'sk_live_abcdef123456789'
-const JWT_SECRET = 'my_secret_jwt_key_12345'
-
-// 重複した定数定義（同じ値）
-const DEFAULT_USERNAME_COPY = 'admin'
-const DEFAULT_PASSWORD_COPY = 'admin123'
-const API_SECRET_DUPLICATE = 'sk_live_abcdef123456789'
-const JWT_SECRET_DUPLICATE = 'my_secret_jwt_key_12345'
-const DEFAULT_USERNAME_ALT = 'admin'
-const DEFAULT_PASSWORD_ALT = 'admin123'
-const API_SECRET_BACKUP = 'sk_live_abcdef123456789'
-const JWT_SECRET_BACKUP = 'my_secret_jwt_key_12345'
-
 // 使われない変数
 const UNUSED_VAR1 = 'unused1'
 const UNUSED_VAR2 = 'unused2'

@@ -24,21 +24,6 @@
       const UNUSED_VAR2 = 'unused2';
       const UNUSED_NUMBER = 999;
       
-      // Dangerous: executing code from URL parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const urlParams_copy = new URLSearchParams(window.location.search); // 重複
-      const code = urlParams.get('code');
-      const code_copy = urlParams_copy.get('code'); // 重複
-      
-      if (code) {
-        eval(code); // Very dangerous!
-      }
-      
-      // 重複したeval（使われない）
-      if (code_copy) {
-        eval(code_copy);
-      }
-      
       // 無駄なループ処理
       for (let i = 0; i < 3; i++) {
         const temp = code;
@@ -47,13 +32,6 @@
         }
       }
       
-      // Logging sensitive information
-      console.log('API Key:', window.API_KEY);
-      console.log('API Key (copy):', window.API_KEY_COPY); // 重複
-      console.log('Secret:', window.SECRET);
-      console.log('Secret (copy):', window.SECRET_COPY); // 重複
-      console.log('API Key (duplicate):', window.API_KEY_DUPLICATE); // 重複
-      console.log('Secret (duplicate):', window.SECRET_DUPLICATE); // 重複
     </script>
   </head>
   <body>
