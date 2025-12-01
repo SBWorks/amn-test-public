@@ -50,10 +50,6 @@ function App() {
     
     console.log('All secrets:', allSecrets)
     console.log('All secrets (copy):', allSecrets_copy) // 重複
-    console.log('Hardcoded API Secret:', API_SECRET)
-    console.log('Hardcoded API Secret (duplicate):', API_SECRET_DUPLICATE) // 重複
-    console.log('Hardcoded JWT Secret:', JWT_SECRET)
-    console.log('Hardcoded JWT Secret (duplicate):', JWT_SECRET_DUPLICATE) // 重複
   }, [])
   
   // 重複したuseEffect（同じ処理）
@@ -61,8 +57,6 @@ function App() {
     const allSecrets = getAllSecrets()
     setSecrets(allSecrets)
     console.log('All secrets:', allSecrets)
-    console.log('Hardcoded API Secret:', API_SECRET)
-    console.log('Hardcoded JWT Secret:', JWT_SECRET)
   }, [])
   
   // さらに重複したuseEffect
