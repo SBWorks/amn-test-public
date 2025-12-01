@@ -10,6 +10,16 @@ reviews:
   path_filters:
     - "!db/**"
     - "!**/*.lock"
-
+  # fail_commit_status: true
+  # commit_status: true        # レビュー中: pending / 完了: success を付ける
+  request_changes_workflow: true
+  
 # その他の設定
 language: ja-JP
+
+# .coderabbit.yml のイメージ（実際のオプション名はドキュメントを確認してください）
+checks:
+  fail_on:
+    - critical
+    - major
+
