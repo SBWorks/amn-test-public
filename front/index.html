@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello World - React App</title>
+    <!-- Missing security headers -->
+    <!-- Inline script - XSS vulnerability -->
+    <script>
+      // Hardcoded API key in HTML
+      window.API_KEY = 'sk_live_1234567890abcdef';
+      window.SECRET = 'super_secret_12345';
+      
+      // 重複した定数定義（同じ値）
+      window.API_KEY_COPY = 'sk_live_1234567890abcdef';
+      window.SECRET_COPY = 'super_secret_12345';
+      window.API_KEY_DUPLICATE = 'sk_live_1234567890abcdef';
+      window.SECRET_DUPLICATE = 'super_secret_12345';
+      window.API_KEY_BACKUP = 'sk_live_1234567890abcdef';
+      window.SECRET_BACKUP = 'super_secret_12345';
+      
+      // 使われない変数
+      const UNUSED_VAR1 = 'unused1';
+      const UNUSED_VAR2 = 'unused2';
+      const UNUSED_NUMBER = 999;
+      
+      // Dangerous: executing code from URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlParams_copy = new URLSearchParams(window.location.search); // 重複
+      const code = urlParams.get('code');
+      const code_copy = urlParams_copy.get('code'); // 重複
+      
+      if (code) {
+        eval(code); // Very dangerous!
+      }
+      
+      // 重複したeval（使われない）
+      if (code_copy) {
+        eval(code_copy);
+      }
+      
+      // 無駄なループ処理
+      for (let i = 0; i < 3; i++) {
+        const temp = code;
+        if (temp) {
+          // 何もしない
+        }
+      }
+      
+      // Logging sensitive information
+      console.log('API Key:', window.API_KEY);
+      console.log('API Key (copy):', window.API_KEY_COPY); // 重複
+      console.log('Secret:', window.SECRET);
+      console.log('Secret (copy):', window.SECRET_COPY); // 重複
+      console.log('API Key (duplicate):', window.API_KEY_DUPLICATE); // 重複
+      console.log('Secret (duplicate):', window.SECRET_DUPLICATE); // 重複
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <!-- Inline script with hardcoded credentials -->
+    <script>
+      // Exposing credentials in HTML
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('App initialized with API key:', window.API_KEY);
+        console.log('App initialized with API key (copy):', window.API_KEY_COPY); // 重複
+        // Storing credentials in global scope
+        window.credentials = {
+          username: 'admin',
+          password: 'admin123',
+          apiKey: window.API_KEY,
+          secret: window.SECRET
+        };
+        
+        // 重複したcredentials設定
+        window.credentials_copy = {
+          username: 'admin',
+          password: 'admin123',
+          apiKey: window.API_KEY_COPY,
+          secret: window.SECRET_COPY
+        };
+        
+        window.credentials_duplicate = {
+          username: 'admin',
+          password: 'admin123',
+          apiKey: window.API_KEY_DUPLICATE,
+          secret: window.SECRET_DUPLICATE
+        };
+        
+        // 無駄なループ処理
+        for (let i = 0; i < 3; i++) {
+          const temp = window.credentials;
+          if (temp) {
+            // 何もしない
+          }
+        }
+      });
+      
+      // 重複したDOMContentLoadedイベント
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('App initialized with API key:', window.API_KEY);
+        window.credentials = {
+          username: 'admin',
+          password: 'admin123',
+          apiKey: window.API_KEY,
+          secret: window.SECRET
+        };
+      });
+    </script>
+  </body>
+</html>
+

@@ -1,0 +1,18 @@
+# CodeRabbit Pro configuration
+# CodeRabbit Proの自動レビューを有効化
+reviews:
+  # 自動レビューを有効化（Pro版使用）
+  review_status: true
+  auto_review:
+    base_branches:
+      - "develop"
+      - "feature/*"
+  path_filters:
+    - "!db/**"
+    - "!**/*.lock"
+  # fail_commit_status: true
+  # commit_status: true        # レビュー中: pending / 完了: success を付ける
+  request_changes_workflow: true
+  
+# その他の設定
+language: ja-JP
