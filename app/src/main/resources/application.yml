@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/db
+    username: root
+    password: ${DB_PASSWORD:DUMMY_DB_PASSWORD_IN_PRODUCTION}
+
+app:
+  secret-key: ${SECRET_KEY:DUMMY_SECRET_CHANGE_IN_PRODUCTION}
+  api-key: ${API_KEY:DUMMY_API_KEY_CHANGE_IN_PRODUCTION}
+

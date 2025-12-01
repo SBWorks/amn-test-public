@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hello World - React App</title>
+    <!-- Missing security headers -->
+    <!-- Inline script - XSS vulnerability -->
+    <script>
+      // Hardcoded API key in HTML
+      window.API_KEY = 'sk_live_1234567890abcdef';
+      window.SECRET = 'super_secret_12345';
+      
+      // 重複した定数定義（同じ値）
+      window.API_KEY_COPY = 'sk_live_1234567890abcdef';
+      window.SECRET_COPY = 'super_secret_12345';
+      window.API_KEY_DUPLICATE = 'sk_live_1234567890abcdef';
+      window.SECRET_DUPLICATE = 'super_secret_12345';
+      window.API_KEY_BACKUP = 'sk_live_1234567890abcdef';
+      window.SECRET_BACKUP = 'super_secret_12345';
+      
+      // 使われない変数
+      const UNUSED_VAR1 = 'unused1';
+      const UNUSED_VAR2 = 'unused2';
+      const UNUSED_NUMBER = 999;
+      
+      // 無駄なループ処理
+      for (let i = 0; i < 3; i++) {
+        const temp = code;
+        if (temp) {
+          // 何もしない
+        }
+      }
+      
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+    <!-- Inline script with hardcoded credentials -->
+  </body>
+</html>
+
