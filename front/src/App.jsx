@@ -904,28 +904,6 @@ function App() {
           )}
         </section>
 
-        {/* ハードコードされた認証情報 */}
-        <section className="section">
-          <h2>7. デフォルト認証情報</h2>
-          <div className="result">
-            <p><strong>デフォルトユーザー名:</strong> {DEFAULT_USERNAME}</p>
-            <p><strong>デフォルトパスワード:</strong> {DEFAULT_PASSWORD}</p>
-            <p><strong>API Secret:</strong> {API_SECRET}</p>
-            <p><strong>JWT Secret:</strong> {JWT_SECRET}</p>
-          </div>
-        </section>
-
-        {/* 重複したセクション（同じ内容） */}
-        <section className="section">
-          <h2>8. デフォルト認証情報（重複）</h2>
-          <div className="result">
-            <p><strong>デフォルトユーザー名:</strong> {DEFAULT_USERNAME_COPY}</p>
-            <p><strong>デフォルトパスワード:</strong> {DEFAULT_PASSWORD_COPY}</p>
-            <p><strong>API Secret:</strong> {API_SECRET_DUPLICATE}</p>
-            <p><strong>JWT Secret:</strong> {JWT_SECRET_DUPLICATE}</p>
-          </div>
-        </section>
-
         {/* さらに重複したセクション */}
         <section className="section">
           <h2>9. デフォルト認証情報（さらに重複）</h2>
